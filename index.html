@@ -529,7 +529,7 @@
                     const urlParams = new URLSearchParams(window.location.search);
                     const secret = urlParams.get("code");
                     if (secret) {
-                        this.secret = secret;
+                        this.secret = secret.replace(/\s/g, '');
                         // 如果通过URL参数传入了密钥，显示提示
                         this.$nextTick(() => {
                             this.$message.success("已从URL参数中获取密钥");
@@ -546,8 +546,10 @@
                 methods: {
                     initTotp() {
                         this.secretError = "";
+                        // 移除密钥中的所有空格
+                        const cleanedSecret = this.secret.replace(/\s/g, '');
 
-                        if (!this.secret) {
+                        if (!cleanedSecret) {
                             this.secretError = "请输入密钥";
                             return;
                         }
@@ -559,7 +561,7 @@
                                 algorithm: this.algorithm,
                                 digits: parseInt(this.digits) || 6,
                                 period: parseInt(this.period) || 30,
-                                secret: this.secret,
+                                secret: cleanedSecret,
                             });
 
                             this.totp = totp;
